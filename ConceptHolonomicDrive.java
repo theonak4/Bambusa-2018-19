@@ -7,6 +7,18 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
+//  ROBOT SEEN FROM ABOVE
+//
+//        X FRONT X
+//      X           X
+//    X  P1       P2  X
+//            X
+//           XXX
+//            X
+//    X  P4       P3  X
+//      X           X
+//        X       X
+
 @TeleOp(name = "BAMBUSA TeleOP", group = "TeleOP")
 //@Disabled
 public class ConceptHolonomicDrive extends OpMode {
