@@ -69,10 +69,10 @@ public class ConceptHolonomicDrive extends OpMode {
 		 */
 
 
-        motorFrontRight = hardwareMap.dcMotor.get("motor front right");
-        motorFrontLeft = hardwareMap.dcMotor.get("motor front left");
-        motorBackLeft = hardwareMap.dcMotor.get("motor back left");
-        motorBackRight = hardwareMap.dcMotor.get("motor back right");
+        motorFrontRight = hardwareMap.dcMotor.get("frontRight");
+        motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
+        motorBackLeft = hardwareMap.dcMotor.get("backRight");
+        motorBackRight = hardwareMap.dcMotor.get("backLeft");
         //These work without reversing (Tetrix motors).
         //AndyMark motors may be opposite, in which case uncomment these lines:
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);
@@ -103,107 +103,24 @@ public class ConceptHolonomicDrive extends OpMode {
 
         pulley = hardwareMap.dcMotor.get("pulley");
 
-        flipper_left = hardwareMap.servo.get("arm left");
-        flipper_right = hardwareMap.servo.get("arm right");
-        flipper_left.setDirection(Servo.Direction.REVERSE);
-
-        flipper_left.setPosition(LEFT_OUT_POSITION);
-        flipper_right.setPosition(RIGHT_OUT_POSITION);
-
     }
 
     @Override
     public void loop() {
 
 
-        // left stick controls direction
-        // right stick X controls rotation
-
-//        float gamepad1LeftY = -gamepad1.left_stick_y;
-//        float gamepad1LeftX = gamepad1.left_stick_x;
-//        float gamepad1RightX = gamepad1.right_stick_x;
-//
-//        // holonomic formulas
-
-//        float FrontLeft = -gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-//        float FrontRight = gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-//        float BackRight = gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
-//        float BackLeft = -gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
-
-        float gamepad1LeftY = gamepad1.left_stick_y;
-        float gamepad1LeftX = gamepad1.left_stick_x;
-        float gamepad1RightX = gamepad1.right_stick_x;
-
-        boolean gamepad2Up = gamepad1.dpad_up;
-        boolean gamepad2Down = gamepad1.dpad_down;
-
-
-        // holonomic formulas
-
-        float FrontLeft = -gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-        float FrontRight = gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-        float BackRight = gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
-        float BackLeft = -gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
-
-        // clip the right/left values so that the values never exceed +/- 1
-        FrontRight = Range.clip(FrontRight, -1, 1);
-        FrontLeft = Range.clip(FrontLeft, -1, 1);
-        BackLeft = Range.clip(BackLeft, -1, 1);
-        BackRight = Range.clip(BackRight, -1, 1);
-
-        motorFrontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        motorBackRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
-        // write the values to the motors
-        motorFrontRight.setPower(FrontRight);
-        motorFrontLeft.setPower(FrontLeft);
-        motorBackLeft.setPower(BackLeft);
-        motorBackRight.setPower(BackRight);
-
-
-        //
-        if(gamepad2Up) {
-            pulley.setPower(1.0);
-        }
-        else if(gamepad2Down) {
-            pulley.setPower(-1.0);
-        }
-        else {
-            pulley.setPower(0.0);
-        }
-
-
-
-
-        if(gamepad1.left_bumper) {
-            flipper_left.setPosition(LEFT_IN_POSITION);
-            flipper_right.setPosition(RIGHT_IN_POSITION);
-        }
-        else {
-            flipper_left.setPosition(LEFT_OUT_POSITION);
-            flipper_right.setPosition(RIGHT_OUT_POSITION);
-        }
-
-
-		/*
-		 * Telemetry for debugging
-		 */
-        telemetry.addData("Text", "*** Oct-30-2017 -v1-Robot Data***");
-        telemetry.addData("Joy XL YL XR",  String.format("%.2f", gamepad1LeftX) + " " +
-                String.format("%.2f", gamepad1LeftY) + " " +  String.format("%.2f", gamepad1RightX));
-
-        telemetry.addData("f left pwr",  "front left  pwr: " + String.format("%.2f", FrontLeft));
-        telemetry.addData("f right pwr", "front right pwr: " + String.format("%.2f", FrontRight));
-        telemetry.addData("b right pwr", "back right pwr: " + String.format("%.2f", BackRight));
-        telemetry.addData("b left pwr", "back left pwr: " + String.format("%.2f", BackLeft));
-
-        telemetry.addData("Encoder FR Position", String.format("%8d", motorFrontRight.getCurrentPosition()));
-        telemetry.addData("Encoder FL Position", String.format("%8d", motorFrontLeft.getCurrentPosition()));
-        telemetry.addData("Encoder BR Position", String.format("%8d", motorBackRight.getCurrentPosition()));
-        telemetry.addData("Encoder BL Position", String.format("%8d", motorBackLeft.getCurrentPosition()));
+        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+	double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+	double rightX = gamepad1.right_stick_x;
+	final double v1 = r * Math.cos(robotAngle) + rightX;
+	final double v2 = r * Math.sin(robotAngle) - rightX;
+	final double v3 = r * Math.sin(robotAngle) + rightX;
+	final double v4 = r * Math.cos(robotAngle) - rightX;
+	
+	motorFrontLeft.setPower(v1);
+	motorFrontRight.setPower(v2);
+	motorBackLeft.setPower(v3)
+	motorBackRight.setPower(v4);
 
     }
 
@@ -217,37 +134,5 @@ public class ConceptHolonomicDrive extends OpMode {
      * scaled value is less than linear.  This is to make it easier to drive
      * the robot more precisely at slower speeds.
      */
-
-    double scaleInput(double dVal)  {
-        double[] scaleArray = { 0.0, 0.05, 0.09, 0.10, 0.12, 0.15, 0.18, 0.24,
-                0.30, 0.36, 0.43, 0.50, 0.60, 0.72, 0.85, 1.00, 1.00 };
-
-        // get the corresponding index for the scaleInput array.
-        int index = (int) (dVal * 16.0);
-
-        // index should be positive.
-        if (index < 0) {
-            index = -index;
-        }
-
-        // index cannot exceed size of array minus 1.
-        if (index > 16) {
-            index = 16;
-        }
-
-        // get value from the array.
-        double dScale = 0.0;
-        if (dVal < 0) {
-            dScale = -scaleArray[index];
-        } else {
-            dScale = scaleArray[index];
-        }
-
-        // return scaled value.
-        return dScale;
-
-
-
-    }
 
 }
