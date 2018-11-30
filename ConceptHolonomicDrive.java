@@ -27,6 +27,7 @@ public class ConceptHolonomicDrive extends OpMode {
     DcMotor motorFrontLeft;
     DcMotor motorBackRight;
     DcMotor motorBackLeft;
+    private ElapsedTime runtime = new ElapsedTime();
 
 
     /**
@@ -54,7 +55,7 @@ public class ConceptHolonomicDrive extends OpMode {
         //These work without reversing (Tetrix motors).
         //AndyMark motors may be opposite, in which case uncomment these lines:
         pulley = hardwareMap.dcMotor.get("pulley");
-
+	telemetry.addData("Status", "Initialized");
     }
 
     @Override
@@ -75,6 +76,7 @@ public class ConceptHolonomicDrive extends OpMode {
 	motorBackRight.setPower(v4);
 	    
 	pully.setPower(gamepad2.left_stick_y);
+	telemetry.addData("Status", "Run Time: " + runtime.toString());
 
     }
 
