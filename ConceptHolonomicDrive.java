@@ -73,6 +73,8 @@ public class ConceptHolonomicDrive extends OpMode {
 	motorFrontRight.setPower(v2);
 	motorBackLeft.setPower(v3)
 	motorBackRight.setPower(v4);
+	    
+	pully.setPower(gamepad2.left_stick_y);
 
     }
 
