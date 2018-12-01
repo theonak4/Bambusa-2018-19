@@ -19,8 +19,8 @@ import com.qualcomm.robotcore.util.Range;
 //    X \            / X
 //    X  \   BACK   /  X
 
-//   X = Motor
-//   / = Mecanum Forces
+//   X = Wheel
+//   / = Mecanum Force
 
 
 @TeleOp(name = "BAMBUSA TeleOP 2", group = "TeleOP")
