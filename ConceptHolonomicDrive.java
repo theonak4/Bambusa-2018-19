@@ -7,28 +7,30 @@ import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-//  ROBOT SEEN FROM ABOVE
+//  Mecanum Forces Diagram
 //
-//        X FRONT X
-//      X           X
-//    X  P1       P2  X
+//    X  /  FRONT   \  X
+//    X /            \ X
+//    X/ DC1     DC2  \X
 //            X
 //           XXX
 //            X
-//    X  P4       P3  X
-//      X           X
-//        X       X
+//    X\ DC4      DC3 /X
+//    X \            / X
+//    X  \   BACK   /  X
 
-@TeleOp(name = "BAMBUSA TeleOP", group = "TeleOP")
+//   X = Motor
+//   / = Mecanum Forces
+
+
+@TeleOp(name = "BAMBUSA TeleOP 2", group = "TeleOP")
 //@Disabled
 public class ConceptHolonomicDrive extends OpMode {
 
-    DcMotor motorFrontRight;
-    DcMotor motorFrontLeft;
-    DcMotor motorBackRight;
-    DcMotor motorBackLeft;
-    private ElapsedTime runtime = new ElapsedTime();
-
+    DcMotor motorFrontRight; // Create Front RIGHT Motor variable
+    DcMotor motorFrontLeft; // Create Front LEFT Motor variable
+    DcMotor motorBackRight; // Create Back RIGHT Motor variable
+    DcMotor motorBackLeft; // Create Back LEFT Motor variable
 
     /**
      * Constructor
@@ -41,42 +43,32 @@ public class ConceptHolonomicDrive extends OpMode {
     public void init() {
 
 
-		/*
-		 * Use the hardwareMap to get the dc motors and servos by name. Note
-		 * that the names of the devices must match the names used when you
-		 * configured your robot and created the configuration file.
-		 */
+        motorFrontRight = hardwareMap.dcMotor.get("frontRight"); // Initialize Front RIGHT Motor
+        motorFrontLeft = hardwareMap.dcMotor.get("frontLeft"); // Initialize Front LEFT Motor
+        motorBackLeft = hardwareMap.dcMotor.get("backRight"); // Initialize Back RIGHT Motor
+        motorBackRight = hardwareMap.dcMotor.get("backLeft"); // Initialize Back LEFT Motor
 
 
-        motorFrontRight = hardwareMap.dcMotor.get("frontRight");
-        motorFrontLeft = hardwareMap.dcMotor.get("frontLeft");
-        motorBackLeft = hardwareMap.dcMotor.get("backRight");
-        motorBackRight = hardwareMap.dcMotor.get("backLeft");
-        //These work without reversing (Tetrix motors).
-        //AndyMark motors may be opposite, in which case uncomment these lines:
-        pulley = hardwareMap.dcMotor.get("pulley");
-	telemetry.addData("Status", "Initialized");
     }
 
     @Override
     public void loop() {
 
-
+		// Calculate rotation with Eucladian Norm to assign each vector the length of its arrow.
         double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
-	double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-	double rightX = gamepad1.right_stick_x;
-	final double v1 = r * Math.cos(robotAngle) + rightX;
-	final double v2 = r * Math.sin(robotAngle) - rightX;
-	final double v3 = r * Math.sin(robotAngle) + rightX;
-	final double v4 = r * Math.cos(robotAngle) - rightX;
+        // Use inverse tangent to calculate mecanum movements
+		double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+		// Grab right stick X value
+		double rightX = gamepad1.right_stick_x;
+		final double v1 = r * Math.cos(robotAngle) + rightX; // Assign DC1 Power
+		final double v2 = r * Math.sin(robotAngle) - rightX; // Assign DC2 Power
+		final double v3 = r * Math.sin(robotAngle) + rightX; // Assign DC3 Power
+		final double v4 = r * Math.cos(robotAngle) - rightX; // Assign DC4 Power
 	
-	motorFrontLeft.setPower(v1);
-	motorFrontRight.setPower(v2);
-	motorBackLeft.setPower(v3)
-	motorBackRight.setPower(v4);
-	    
-	pully.setPower(gamepad2.left_stick_y);
-	telemetry.addData("Status", "Run Time: " + runtime.toString());
+		motorFrontLeft.setPower(v1); // Set Front LEFT Power with the DC1 calculation
+		motorFrontRight.setPower(v2); // Set Front RIGHT Power with the DC2 calculation
+		motorBackLeft.setPower(v3); // Set Back LEFT Power with DC3 calculation
+		motorBackRight.setPower(v4); // Set Back RIGHT Power with DC4 calculation
 
     }
 
