@@ -9,12 +9,13 @@ import com.qualcomm.robotcore.util.Range;
 
 //  Mecanum Forces Diagram
 //
+//        ^        ^
 //    X  /  FRONT   \  X
 //    X /            \ X
 //    X/ DC1     DC2  \X
 //            X
 //           XXX
-//            X
+//    ^       X        ^
 //    X\ DC4      DC3 /X
 //    X \            / X
 //    X  \   BACK   /  X
