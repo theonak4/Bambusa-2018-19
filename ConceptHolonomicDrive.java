@@ -9,22 +9,21 @@ import com.qualcomm.robotcore.util.Range;
 
 //  Mecanum Forces Diagram
 //
-//        ^        ^
 //    X  /  FRONT   \  X
 //    X /            \ X
 //    X/ DC1     DC2  \X
 //            X
 //           XXX
-//    ^       X        ^
+//            X
 //    X\ DC4      DC3 /X
 //    X \            / X
 //    X  \   BACK   /  X
 
-//   X = Wheel
-//   / = Mecanum Force
+//   X = Motor
+//   / = Mecanum Forces
 
 
-@TeleOp(name = "BAMBUSA TeleOP 2", group = "TeleOP")
+@TeleOp(name = "BAMBUSA TeleOP 3", group = "TeleOP")
 //@Disabled
 public class ConceptHolonomicDrive extends OpMode {
 
@@ -32,6 +31,7 @@ public class ConceptHolonomicDrive extends OpMode {
     DcMotor motorFrontLeft; // Create Front LEFT Motor variable
     DcMotor motorBackRight; // Create Back RIGHT Motor variable
     DcMotor motorBackLeft; // Create Back LEFT Motor variable
+	//DcMotor pulley; // Create Pulley Motor Variable
 
     /**
      * Constructor
@@ -56,9 +56,9 @@ public class ConceptHolonomicDrive extends OpMode {
     public void loop() {
 
 		// Calculate rotation with Eucladian Norm to assign each vector the length of its arrow.
-        double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+        double r = Math.hypot(-gamepad1.left_stick_x, -gamepad1.left_stick_y);
         // Use inverse tangent to calculate mecanum movements
-		double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+		double robotAngle = Math.atan2(-gamepad1.left_stick_y, -gamepad1.left_stick_x) - Math.PI / 4;
 		// Grab right stick X value
 		double rightX = gamepad1.right_stick_x;
 		final double v1 = r * Math.cos(robotAngle) + rightX; // Assign DC1 Power
@@ -70,6 +70,8 @@ public class ConceptHolonomicDrive extends OpMode {
 		motorFrontRight.setPower(v2); // Set Front RIGHT Power with the DC2 calculation
 		motorBackLeft.setPower(v3); // Set Back LEFT Power with DC3 calculation
 		motorBackRight.setPower(v4); // Set Back RIGHT Power with DC4 calculation
+
+		//pulley.setPower(gamepad2.left_stick_y);
 
     }
 
