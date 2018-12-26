@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.util.Range;
 
 @Autonomous(name = "BAMBUSA Autonomous", group = "Autonomous")
 //@Disabled
-public class ConceptHolonomicDrive extends OpMode {
+public class Autonomous extends Autonomous {
 
     DcMotor motorFrontRight; // Create Front RIGHT Motor variable
     DcMotor motorFrontLeft; // Create Front LEFT Motor variable
@@ -20,7 +20,7 @@ public class ConceptHolonomicDrive extends OpMode {
     /**
      * Constructor
      */
-    public ConceptHolonomicDrive() {
+    public Autonomous() {
 
     }
 
